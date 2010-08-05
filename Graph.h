@@ -33,10 +33,13 @@ class Graph {
 
         typedef T* vertex_iterator; // fix!
         typedef T* edge_iterator; // fix!
-        typedef T* adjacency_iterator; // fix!
+	typedef T* adjacency_iterator;//fix
 
         typedef std::size_t vertices_size_type;
         typedef std::size_t edges_size_type;
+
+
+
 
     public:
         // --------
@@ -223,6 +226,7 @@ class Graph {
 	T vertices;
 	T edges;
  	std::vector< std::vector<vertex_descriptor> > g; // something like this
+ 	std::vector< std::vector<edge_descriptor> > h; // something like this
 
 
 
@@ -237,6 +241,8 @@ class Graph {
             // <your code>
             return true;}
 
+
+
     public:
         // ------------
         // constructors
@@ -245,7 +251,7 @@ class Graph {
         /**
 * <your documentation>
 */
-        Graph () : g() {
+        Graph () : g(), h() {
             vertices = 0;
 	    edges = 0;
             assert(valid());}

@@ -238,15 +238,15 @@ struct TestGraph : CppUnit::TestFixture {
 
     CPPUNIT_TEST_SUITE(TestGraph);
     CPPUNIT_TEST(test_add_edge);
-    CPPUNIT_TEST(test_adjacent_vertices);
-    CPPUNIT_TEST(test_edge);
-    CPPUNIT_TEST(test_edges);
-    CPPUNIT_TEST(test_num_edges);
-    CPPUNIT_TEST(test_num_vertices);
-    CPPUNIT_TEST(test_source);
-    CPPUNIT_TEST(test_target);
-    CPPUNIT_TEST(test_vertex);
-    CPPUNIT_TEST(test_vertices);
+    //CPPUNIT_TEST(test_adjacent_vertices);
+    //CPPUNIT_TEST(test_edge);
+    //CPPUNIT_TEST(test_edges);
+    //CPPUNIT_TEST(test_num_edges);
+    //CPPUNIT_TEST(test_num_vertices);
+    //CPPUNIT_TEST(test_source);
+    //CPPUNIT_TEST(test_target);
+    //CPPUNIT_TEST(test_vertex);
+    //CPPUNIT_TEST(test_vertices);
     CPPUNIT_TEST_SUITE_END();};
 
 
