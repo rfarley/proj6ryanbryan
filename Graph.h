@@ -52,17 +52,20 @@ class Graph {
         friend std::pair<edge_descriptor, bool> add_edge (vertex_descriptor source, vertex_descriptor target, Graph& graph) {
 	    if(source == target) return std::make_pair(-1, false);
             std::vector<std::vector<int> >::iterator b = graph.g.begin();
+            std::vector<std::vector<int> >::iterator c = graph.h.begin();
             std::vector<std::vector<int> >::iterator e = graph.g.end();
 	    std::vector<int>* svect;
+	    std::vector<int>* edsvect;
 	    bool foundtarget = false;
 	    bool foundsource = false;
 	    edge_descriptor ed = graph.edges;
 	    while(b != e){
 		std::vector<int>& vect = *b;
+		std::vector<int>& edvect = *c;
 		if(vect[0] == target){
  			foundtarget = true;
 			if(foundsource){
-				(*svect).push_back(ed);
+				(*edsvect).push_back(ed);
 				(*svect).push_back(target);
 				graph.edges++;
  				return std::make_pair(ed,true);
@@ -71,21 +74,24 @@ class Graph {
 		else if(vect[0] == source){
 			foundsource = true;
 			svect = &vect;
+			edsvect = &edvect;
+	                std::vector<int>::iterator edpoint = edvect.begin();
 	                std::vector<int>::iterator point = vect.begin();
 	                std::vector<int>::iterator pend = vect.end();
-			point += 2;
+			point ++;
 			while(point < pend){
-				if(target == *point) return std::make_pair(*(point-1), false);
-				point+=2;
+				if(target == *point) return std::make_pair(*edpoint, false);
+				point++;
+				edpoint++;
 				}
 			if(foundtarget){ 
-				vect.push_back(ed);
+				edvect.push_back(ed);
 				vect.push_back(target);
 				graph.edges++;
 				return std::make_pair(ed,true);
 			}
 		}
-		b++;
+		b++; c++;
 	    }
             return std::make_pair(-1, false);}
 
@@ -101,6 +107,7 @@ class Graph {
 	    std::vector<T> vect(1);
 	    vect[0] = v;
             graph.g.push_back(vect);
+	    graph.h.push_back(vect);
 	    graph.vertices++;
             return v;}
 
