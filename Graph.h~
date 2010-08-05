@@ -27,14 +27,13 @@ class Graph {
         // --------
 
 	typedef int T;
-	typedef std::vector<int> C;
 
-        typedef int vertex_descriptor; // fix!
-        typedef int edge_descriptor; // fix!
+        typedef T vertex_descriptor; // fix!
+        typedef T edge_descriptor; // fix!
 
-        typedef int* vertex_iterator; // fix!
-        typedef int* edge_iterator; // fix!
-        typedef int* adjacency_iterator; // fix!
+        typedef T* vertex_iterator; // fix!
+        typedef T* edge_iterator; // fix!
+        typedef T* adjacency_iterator; // fix!
 
         typedef std::size_t vertices_size_type;
         typedef std::size_t edges_size_type;
@@ -47,11 +46,45 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend std::pair<edge_descriptor, bool> add_edge (vertex_descriptor, vertex_descriptor, Graph&) {
-            // <your code>
-            edge_descriptor ed;
-            bool b;
-            return std::make_pair(ed, b);}
+        friend std::pair<edge_descriptor, bool> add_edge (vertex_descriptor source, vertex_descriptor target, Graph& graph) {
+	    if(source == target) return std::make_pair(-1, false);
+            std::vector<std::vector<int> >::iterator b = graph.g.begin();
+            std::vector<std::vector<int> >::iterator e = graph.g.end();
+	    std::vector<int>* svect;
+	    bool foundtarget = false;
+	    bool foundsource = false;
+	    edge_descriptor ed = graph.edges;
+	    while(b != e){
+		std::vector<int>& vect = *b;
+		if(vect[0] == target){
+ 			foundtarget = true;
+			if(foundsource){
+				(*svect).push_back(ed);
+				(*svect).push_back(target);
+				graph.edges++;
+ 				return std::make_pair(ed,true);
+				}
+			}
+		else if(vect[0] == source){
+			foundsource = true;
+			svect = &vect;
+	                std::vector<int>::iterator point = vect.begin();
+	                std::vector<int>::iterator pend = vect.end();
+			point += 2;
+			while(point < pend){
+				if(target == *point) return std::make_pair(-1, false);
+				point+=2;
+				}
+			if(foundtarget){ 
+				vect.push_back(ed);
+				vect.push_back(target);
+				graph.edges++;
+				return std::make_pair(ed,true);
+			}
+		}
+		b++;
+	    }
+            return std::make_pair(-1, false);}
 
         // ----------
         // add_vertex
@@ -60,9 +93,12 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend vertex_descriptor add_vertex (Graph&) {
-            // <your code>
-            vertex_descriptor v;
+        friend vertex_descriptor add_vertex (Graph& graph) {
+            vertex_descriptor v = graph.vertices;
+	    std::vector<T> vect(1);
+	    vect[0] = v;
+            graph.g.push_back(vect);
+	    graph.vertices++;
             return v;}
 
         // -----------------
@@ -184,7 +220,11 @@ class Graph {
         // data
         // ----
 
-        std::vector< std::vector<vertex_descriptor> > g; // something like this
+	T vertices;
+	T edges;
+ 	std::vector< std::vector<vertex_descriptor> > g; // something like this
+
+
 
         // -----
         // valid
@@ -205,8 +245,9 @@ class Graph {
         /**
 * <your documentation>
 */
-        Graph () {
-            // <your code>
+        Graph () : g() {
+            vertices = 0;
+	    edges = 0;
             assert(valid());}
 
         // Default copy, destructor, and copy assignment

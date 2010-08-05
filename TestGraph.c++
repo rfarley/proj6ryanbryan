@@ -262,7 +262,7 @@ int main () {
     cout << "TestGraph.c++" << endl;
 
     CppUnit::TextTestRunner tr;
-    tr.addTest(TestGraph< adjacency_list<setS, vecS, directedS> >::suite());
+    //tr.addTest(TestGraph< adjacency_list<setS, vecS, directedS> >::suite());
     tr.addTest(TestGraph<Graph>::suite());
     tr.run();
 
