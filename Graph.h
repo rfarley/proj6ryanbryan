@@ -31,9 +31,9 @@ class Graph {
         typedef T vertex_descriptor; // fix!
         typedef T edge_descriptor; // fix!
 
-        typedef T* vertex_iterator; // fix!
-        typedef T* edge_iterator; // fix!
-	typedef T* adjacency_iterator;//fix
+        typedef std::vector<T>::iterator vertex_iterator; // fix!
+        typedef std::vector<T>::iterator edge_iterator; // fix!
+	typedef std::vector<T>::iterator adjacency_iterator;//fix
 
         typedef std::size_t vertices_size_type;
         typedef std::size_t edges_size_type;
@@ -51,21 +51,22 @@ class Graph {
 */
         friend std::pair<edge_descriptor, bool> add_edge (vertex_descriptor source, vertex_descriptor target, Graph& graph) {
 	    if(source == target) return std::make_pair(-1, false);
-            std::vector<std::vector<int> >::iterator b = graph.g.begin();
-            std::vector<std::vector<int> >::iterator c = graph.h.begin();
-            std::vector<std::vector<int> >::iterator e = graph.g.end();
-	    std::vector<int>* svect;
-	    std::vector<int>* edsvect;
+            std::vector<std::vector<T> >::iterator b = graph.g.begin();
+            std::vector<std::vector<T> >::iterator c = graph.h.begin();
+            std::vector<std::vector<T> >::iterator e = graph.g.end();
+	    std::vector<T>* svect;
+	    std::vector<T>* edsvect;
 	    bool foundtarget = false;
 	    bool foundsource = false;
 	    edge_descriptor ed = graph.edges;
 	    while(b != e){
-		std::vector<int>& vect = *b;
-		std::vector<int>& edvect = *c;
+		std::vector<T>& vect = *b;
+		std::vector<T>& edvect = *c;
 		if(vect[0] == target){
  			foundtarget = true;
 			if(foundsource){
 				(*edsvect).push_back(ed);
+				graph.elist.push_back(ed);
 				(*svect).push_back(target);
 				graph.edges++;
  				return std::make_pair(ed,true);
@@ -75,9 +76,9 @@ class Graph {
 			foundsource = true;
 			svect = &vect;
 			edsvect = &edvect;
-	                std::vector<int>::iterator edpoint = edvect.begin();
-	                std::vector<int>::iterator point = vect.begin();
-	                std::vector<int>::iterator pend = vect.end();
+	                std::vector<T>::iterator edpoint = edvect.begin();
+	                std::vector<T>::iterator point = vect.begin();
+	                std::vector<T>::iterator pend = vect.end();
 			point ++;
 			while(point < pend){
 				if(target == *point) return std::make_pair(*edpoint, false);
@@ -86,6 +87,7 @@ class Graph {
 				}
 			if(foundtarget){ 
 				edvect.push_back(ed);
+				graph.elist.push_back(ed);
 				vect.push_back(target);
 				graph.edges++;
 				return std::make_pair(ed,true);
@@ -108,6 +110,7 @@ class Graph {
 	    vect[0] = v;
             graph.g.push_back(vect);
 	    graph.h.push_back(vect);
+	    graph.vlist.push_back(v);
 	    graph.vertices++;
             return v;}
 
@@ -118,11 +121,20 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend std::pair<adjacency_iterator, adjacency_iterator> adjacent_vertices (vertex_descriptor, const Graph&) {
-            // <your code>
-            adjacency_iterator b = adjacency_iterator();
-            adjacency_iterator e = adjacency_iterator();
-            return std::make_pair(b, e);}
+        friend std::pair<adjacency_iterator, adjacency_iterator> adjacent_vertices (vertex_descriptor v, const Graph& graph) {
+	    Graph* grp = const_cast<Graph*>(&graph);
+            std::vector<std::vector<T> >::iterator b = (*grp).g.begin();
+            std::vector<std::vector<T> >::iterator e = (*grp).g.end();
+	    
+	    while(b != e){
+		if((*b)[0] == v){
+			return std::make_pair((*b).begin()+1, (*b).end());
+		}
+		++b;
+	    }
+	    std::vector<T> dummy(10);
+	  
+            return std::make_pair(dummy.begin(), dummy.end());}
 
         // ----
         // edge
@@ -131,11 +143,31 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend std::pair<edge_descriptor, bool> edge (vertex_descriptor, vertex_descriptor, const Graph&) {
-            // <your code>
-            edge_descriptor ed;
-            bool b;
-            return std::make_pair(ed, b);}
+        friend std::pair<edge_descriptor, bool> edge (vertex_descriptor source, vertex_descriptor target, const Graph& graph) {
+	    Graph* grp = const_cast<Graph*>(&graph);
+            std::vector<std::vector<T> >::iterator b = (*grp).g.begin();
+            std::vector<std::vector<T> >::iterator e = (*grp).g.end();
+	    int row = 0;
+	    int column = 0;
+
+	    while(b != e){
+		if((*b)[0] == source){
+			std::vector<T>::iterator b2 = (*b).begin();
+			std::vector<T>::iterator e2 = (*b).end();
+			while(b2 != e2){
+				if((*b2) == target){
+					return std::make_pair((*grp).h[row][column], true);
+				}
+			++column;
+			++b2;
+			}
+		}
+		++row;
+		column = 0;
+		++b;
+	    }
+
+            return std::make_pair(-1, false);}
 
         // -----
         // edges
@@ -146,10 +178,10 @@ class Graph {
 * O(1) in time
 * <your documentation>
 */
-        friend std::pair<edge_iterator, edge_iterator> edges (const Graph&) {
-            // <your code>
-            edge_iterator b;
-            edge_iterator e;
+        friend std::pair<edge_iterator, edge_iterator> edges (const Graph& graph) {
+	    Graph* grp = const_cast<Graph*>(&graph);
+            edge_iterator b = (*grp).elist.begin();
+            edge_iterator e = (*grp).elist.end();
             return std::make_pair(b, e);}
 
         // ---------
@@ -159,9 +191,8 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend edges_size_type num_edges (const Graph&) {
-            // <your code>
-            edges_size_type s;
+        friend edges_size_type num_edges (const Graph& graph) {
+            edges_size_type s = graph.edges;
             return s;}
 
         // ------------
@@ -171,9 +202,8 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend vertices_size_type num_vertices (const Graph&) {
-            // <your code>
-            vertices_size_type s;
+        friend vertices_size_type num_vertices (const Graph& graph) {
+            vertices_size_type s = graph.vertices;
             return s;}
 
         // ------
@@ -183,10 +213,25 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend vertex_descriptor source (edge_descriptor, const Graph&) {
-            // <your code>
-            vertex_descriptor v;
-            return v;}
+        friend vertex_descriptor source (edge_descriptor edge, const Graph& graph) {
+	    Graph* grp = const_cast<Graph*>(&graph);
+            std::vector<std::vector<T> >::iterator b = (*grp).h.begin();
+            std::vector<std::vector<T> >::iterator e = (*grp).h.end();
+	    int row = 0;
+
+	    while(b != e){
+		std::vector<T>::iterator b2 = (*b).begin();
+		std::vector<T>::iterator e2 = (*b).end();
+		while(b2 != e2){
+			if((*b2) == edge){
+				return (*grp).h[row][0];
+			}
+		++b2;
+		}
+		++row;
+		++b;
+	    }
+            return -1;}
 
         // ------
         // target
@@ -195,10 +240,28 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend vertex_descriptor target (edge_descriptor, const Graph&) {
-            // <your code>
-            vertex_descriptor v;
-            return v;}
+        friend vertex_descriptor target (edge_descriptor edge, const Graph& graph) {
+	    Graph* grp = const_cast<Graph*>(&graph);
+            std::vector<std::vector<T> >::iterator b = (*grp).h.begin();
+            std::vector<std::vector<T> >::iterator e = (*grp).h.end();
+	    int row = 0;
+	    int column = 1;
+
+	    while(b != e){
+		std::vector<T>::iterator b2 = (*b).begin()+1;
+		std::vector<T>::iterator e2 = (*b).end();
+		while(b2 != e2){
+			if((*b2) == edge){
+				return (*grp).g[row][column];
+			}
+		++b2;
+		++column;
+		}
+		++row;
+		column = 1;
+		++b;
+	    }
+            return -1;}
 
         // ------
         // vertex
@@ -207,9 +270,9 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend vertex_descriptor vertex (vertices_size_type, const Graph&) {
-            // <your code>
-            vertex_descriptor vd;
+        friend vertex_descriptor vertex (vertices_size_type s, const Graph& graph) {
+	    Graph* grp = const_cast<Graph*>(&graph);
+            vertex_descriptor vd = (*grp).g[s][0];
             return vd;}
 
         // --------
@@ -219,21 +282,54 @@ class Graph {
         /**
 * <your documentation>
 */
-        friend std::pair<vertex_iterator, vertex_iterator> vertices (const Graph&) {
-            // <your code>
-            vertex_iterator b = vertex_iterator();
-            vertex_iterator e = vertex_iterator();
+        friend std::pair<vertex_iterator, vertex_iterator> vertices (const Graph& graph) {
+	    Graph* grp = const_cast<Graph*>(&graph);
+            vertex_iterator b = (*grp).vlist.begin();
+            vertex_iterator e = (*grp).vlist.end();
             return std::make_pair(b, e);}
+
+        // --------
+        // has_cycle
+        // --------
+
+        /**
+* <your documentation>
+*/
+        friend bool has_cycle (const Graph& graph) {
+	       using namespace std;
+	       Graph* grp = const_cast<Graph*>(&graph);
+		std::vector<std::vector<T> > visitarray((*grp).g.size());
+		std::vector<std::vector<T> >::iterator point = (*grp).g.begin();
+		for(int i = 0; i < (int)(*grp).g.size(); i++){
+			std::vector<T> a(2,0);
+			cout << "point begin added: " << (*point)[0] << endl;
+			a[0] = (*point)[0];
+			visitarray.push_back(a);
+			point++;
+		}
+		std::vector<std::vector<T> >::iterator b = visitarray.begin();
+		std::vector<std::vector<T> >::iterator e = visitarray.end();
+		while( b != e){
+			cout << "vertex: " << (*b)[1] << endl;
+			/**
+			if((*b)[1] == 0){
+				std::cout << "passing in vertex" << (*b)[0] << std::endl;
+				if((*grp).has_cycle_help(b, visitarray)) return true;} **/
+			b++;
+		}
+            return false;}
 
     private:
         // ----
         // data
         // ----
 
-	T vertices;
-	T edges;
+	size_t vertices;
+	size_t edges;
  	std::vector< std::vector<vertex_descriptor> > g; // something like this
  	std::vector< std::vector<edge_descriptor> > h; // something like this
+	std::vector<T> elist;
+	std::vector<T> vlist;
 
 
 
@@ -248,6 +344,59 @@ class Graph {
             // <your code>
             return true;}
 
+	void print() {
+	using namespace std;
+	cout << "g: " << endl;
+            std::vector<std::vector<T> >::iterator b = g.begin();
+            std::vector<std::vector<T> >::iterator e = g.end();
+	    while(b != e){
+		std::vector<T>::iterator b2 = (*b).begin();
+		std::vector<T>::iterator e2 = (*b).end();
+			while(b2 != e2){
+			cout << *b2 << ".";
+			++b2;
+			}
+		cout << endl;
+		++b;
+	    }
+	cout << endl;
+	cout << "h: " << endl;
+             b = h.begin();
+             e = h.end();
+	    while(b != e){
+		std::vector<T>::iterator b2 = (*b).begin();
+		std::vector<T>::iterator e2 = (*b).end();
+			while(b2 != e2){
+			cout << *b2 << ".";
+			++b2;
+			}
+		cout << endl;
+		++b;
+	    }
+	
+	}
+
+	bool has_cycle_help(std::vector<std::vector<T> >::iterator& beg, std::vector<std::vector<T> >& visitarray){
+		using namespace std;
+		cout << "This vertex: " << (*beg)[0] << endl;
+		(*beg)[1] = 1;
+		std::vector<T> successors = g[(*beg)[0]];
+                std::vector<T>::iterator b = successors.begin()+1;
+                std::vector<T>::iterator e = successors.end();
+		while(b != e){
+			cout << "\tchecking vertex: " << (*b) << endl;
+			if (visitarray[*b][1] == 1) return true;
+			if (visitarray[*b][1] == 2){
+				cout << "\t\tdoing this" << endl;
+				std::vector<std::vector<T> >::iterator beg2 = visitarray.begin() + *b;
+				if (has_cycle_help(beg2, visitarray)) return true;
+			}
+			b++;
+		}
+		(*beg)[1] = 2;
+		return false;
+	}
+
 
 
     public:
@@ -258,7 +407,7 @@ class Graph {
         /**
 * <your documentation>
 */
-        Graph () : g(), h() {
+        Graph () : g(), h(), elist(), vlist() {
             vertices = 0;
 	    edges = 0;
             assert(valid());}
