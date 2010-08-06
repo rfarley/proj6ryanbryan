@@ -102,7 +102,7 @@ struct TestGraph : CppUnit::TestFixture {
         edBE = add_edge(vdB, vdE, g).first;
         edCD = add_edge(vdC, vdD, g).first;
         edDE = add_edge(vdD, vdE, g).first;
-        edDF = add_edge(vdD, vdF, g).first;
+        //edDF = add_edge(vdD, vdF, g).first;
         edFD = add_edge(vdF, vdD, g).first;
         edFH = add_edge(vdF, vdH, g).first;
         edGH = add_edge(vdG, vdH, g).first;}
@@ -247,6 +247,7 @@ struct TestGraph : CppUnit::TestFixture {
     CPPUNIT_TEST(test_target);
     CPPUNIT_TEST(test_vertex);
     CPPUNIT_TEST(test_vertices);
+    CPPUNIT_TEST(test_has_cycle);
     CPPUNIT_TEST_SUITE_END();};
 
 

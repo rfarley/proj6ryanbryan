@@ -298,11 +298,10 @@ class Graph {
         friend bool has_cycle (const Graph& graph) {
 	       using namespace std;
 	       Graph* grp = const_cast<Graph*>(&graph);
-		std::vector<std::vector<T> > visitarray((*grp).g.size());
+		std::vector<std::vector<T> > visitarray(0);
 		std::vector<std::vector<T> >::iterator point = (*grp).g.begin();
 		for(int i = 0; i < (int)(*grp).g.size(); i++){
 			std::vector<T> a(2,0);
-			cout << "point begin added: " << (*point)[0] << endl;
 			a[0] = (*point)[0];
 			visitarray.push_back(a);
 			point++;
@@ -310,11 +309,10 @@ class Graph {
 		std::vector<std::vector<T> >::iterator b = visitarray.begin();
 		std::vector<std::vector<T> >::iterator e = visitarray.end();
 		while( b != e){
-			cout << "vertex: " << (*b)[0] << endl;
-			/**
+			
 			if((*b)[1] == 0){
 				std::cout << "passing in vertex" << (*b)[0] << std::endl;
-				if((*grp).has_cycle_help(b, visitarray)) return true;} **/
+				if((*grp).has_cycle_help(b, visitarray)) return true;} 
 			b++;
 		}
             return false;}
