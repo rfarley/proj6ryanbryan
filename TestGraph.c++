@@ -138,7 +138,10 @@ struct TestGraph : CppUnit::TestFixture {
     // ---------
 
     void test_edge () {
-        std::pair<edge_descriptor, bool> p = edge(vdA, vdB, g);
+        const std::pair<edge_descriptor, bool>& p = edge(vdA, vdB, g);
+	const std::pair<edge_descriptor, bool>& q = edge(vdA, vdB, g);
+        CPPUNIT_ASSERT(p.first == q.first);
+        CPPUNIT_ASSERT(&p.first != &q.first);
         CPPUNIT_ASSERT(p.first == edAB);
         CPPUNIT_ASSERT(p.second == true);}
 
@@ -196,7 +199,10 @@ struct TestGraph : CppUnit::TestFixture {
     // -----------
 
     void test_vertex () {
-        vertex_descriptor vd = vertex(0, g);
+        const vertex_descriptor& vd = vertex(0, g);
+        const vertex_descriptor& vd2 = vertex(0, g);
+        assert(vd == vd2);
+        assert(&vd != &vd2);
         CPPUNIT_ASSERT(vd == vdA);}
 
     // -------------
