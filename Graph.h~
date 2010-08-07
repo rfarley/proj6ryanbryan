@@ -15,6 +15,10 @@
 #include <cstddef> // size_t
 #include <utility> // make_pair, pair
 #include <vector> // vector
+#include <set> //set
+#include <map>
+#include <iterator>
+#include <sstream>
 
 // -----
 // Graph
@@ -51,6 +55,7 @@ class Graph {
 */
         friend std::pair<edge_descriptor, bool> add_edge (vertex_descriptor source, vertex_descriptor target, Graph& graph) {
 	    if(source == target) return std::make_pair(-1, false);
+            graph.parents[target].push_back(source);
             std::vector<std::vector<T> >::iterator b = graph.g.begin();
             std::vector<std::vector<T> >::iterator c = graph.h.begin();
             std::vector<std::vector<T> >::iterator e = graph.g.end();
@@ -111,6 +116,7 @@ class Graph {
             graph.g.push_back(vect);
 	    graph.h.push_back(vect);
 	    graph.vlist.push_back(v);
+	    graph.parents.insert(std::pair<T, std::list<T> >(v, std::list<T>()));
 	    graph.vertices++;
             return v;}
 
@@ -311,11 +317,87 @@ class Graph {
 		while( b != e){
 			
 			if((*b)[1] == 0){
-				std::cout << "passing in vertex" << (*b)[0] << std::endl;
 				if((*grp).has_cycle_help(b, visitarray)) return true;} 
 			b++;
 		}
             return false;}
+
+	friend void topological_sort (const Graph& graph, std::ostream_iterator<vertex_descriptor> ois){
+		if(has_cycle(graph)) return;
+		using namespace std;
+		Graph* grp = const_cast<Graph*>(&graph);
+		list<T> s;
+		map<T, std::list<T> > parents = (*grp).parents;
+		map<T, std::list<T> >::iterator b = parents.begin();
+		map<T, std::list<T> >::iterator e = parents.end();
+		while(b != e){
+			if((*b).second.empty()){ 
+				s.push_back((*b).first);
+			}
+			b++;
+		}
+		list<T> l;
+		while(s.size() != 0){
+			T node = *(s.begin());
+			s.remove(node);
+			l.push_back(node);
+			std::vector<T>::iterator vb = (*grp).g[node].begin();
+			std::vector<T>::iterator ve = (*grp).g[node].end();
+			++vb;
+			while(vb != ve){
+				parents[*vb].remove(node);
+				if(parents[*vb].empty()){
+ 					s.push_back(*vb);
+				}
+				vb++;
+			}
+		}
+		list<T>::iterator lb = l.begin();
+		list<T>::iterator le = l.end();
+		while(lb != le){
+			std::cout << (*lb) <<".";
+			lb++;
+		}
+		std::cout << std::endl;
+	}
+
+	friend void topological_sort_2 (const Graph& graph, std::ostream_iterator<vertex_descriptor> ois){
+		if(has_cycle(graph)) return;
+		using namespace std;
+		Graph* grp = const_cast<Graph*>(&graph);
+		list<T> s;
+		list<T> l;
+		map<T, std::list<T> > parents = (*grp).parents;
+		map<T, std::list<T> >::iterator b = parents.begin();
+		map<T, std::list<T> >::iterator e = parents.end();
+		while(b != e){
+			if((*b).second.empty()){ 
+				s.push_back((*b).first);
+			}
+			b++;
+		}
+		std::vector<std::vector<T> > visitarray(0);
+		std::vector<std::vector<T> >::iterator point = (*grp).g.begin();
+		for(int i = 0; i < (int)(*grp).g.size(); i++){
+			std::vector<T> a(2,0);
+			a[0] = (*point)[0];
+			visitarray.push_back(a);
+			point++;
+		}
+		list<T>::iterator sb = s.begin();
+		list<T>::iterator se = s.end();
+		while(sb != se){
+			(*grp).visit(*sb, visitarray, l);
+			sb++;
+		}
+		list<T>::iterator lb = l.begin();
+		list<T>::iterator le = l.end();
+		while(lb != le){
+			std::cout << (*lb) <<".";
+			lb++;
+		}
+		std::cout << std::endl;
+	}
 
     private:
         // ----
@@ -328,6 +410,7 @@ class Graph {
  	std::vector< std::vector<edge_descriptor> > h; // something like this
 	std::vector<T> elist;
 	std::vector<T> vlist;
+	std::map<T, std::list<T> > parents;
 
 
 
@@ -344,6 +427,7 @@ class Graph {
 
 	void print() {
 	using namespace std;
+	/**
 	cout << "g: " << endl;
             std::vector<std::vector<T> >::iterator b = g.begin();
             std::vector<std::vector<T> >::iterator e = g.end();
@@ -371,21 +455,19 @@ class Graph {
 		cout << endl;
 		++b;
 	    }
+	  **/
 	
 	}
 
 	bool has_cycle_help(std::vector<std::vector<T> >::iterator& beg, std::vector<std::vector<T> >& visitarray){
 		using namespace std;
-		cout << "This vertex: " << (*beg)[0] << endl;
 		(*beg)[1] = 1;
 		std::vector<T> successors = g[(*beg)[0]];
                 std::vector<T>::iterator b = successors.begin()+1;
                 std::vector<T>::iterator e = successors.end();
 		while(b != e){
-			cout << "\tchecking vertex: " << (*b) << endl;
 			if (visitarray[*b][1] == 1) return true;
 			if (visitarray[*b][1] == 2){
-				cout << "\t\tdoing this" << endl;
 				std::vector<std::vector<T> >::iterator beg2 = visitarray.begin() + *b;
 				if (has_cycle_help(beg2, visitarray)) return true;
 			}
@@ -393,6 +475,20 @@ class Graph {
 		}
 		(*beg)[1] = 2;
 		return false;
+	}
+
+	void visit (vertex_descriptor n, std::vector<std::vector<T> >& visitarray, std::list<T>& l){
+		if(visitarray[n][1] == 0){
+			visitarray[n][1] = 1;
+			std::vector<T>::iterator vb = g[n].begin();
+			std::vector<T>::iterator ve = g[n].end();
+			++vb;
+			while(vb != ve){
+				visit(*vb, visitarray, l);
+				vb++;
+			}
+			l.push_back(n);
+		}
 	}
 
 
@@ -405,7 +501,7 @@ class Graph {
         /**
 * <your documentation>
 */
-        Graph () : g(), h(), elist(), vlist() {
+        Graph () : g(), h(), elist(), vlist(), parents() {
             vertices = 0;
 	    edges = 0;
             assert(valid());}
