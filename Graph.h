@@ -24,6 +24,7 @@
 // Graph
 // -----
 
+
 class Graph {
     public:
         // --------
@@ -361,6 +362,7 @@ class Graph {
 		std::cout << std::endl;
 	}
 
+
 	friend void topological_sort(const Graph& graph, std::ostream_iterator<vertex_descriptor> ois){
 		if(has_cycle(graph)) return;
 		using namespace std;
@@ -392,11 +394,14 @@ class Graph {
 		}
 		list<T>::iterator lb = l.begin();
 		list<T>::iterator le = l.end();
+		copy(lb, le, ois);
+		/**
 		while(lb != le){
 			std::cout << (*lb) <<".";
 			lb++;
 		}
 		std::cout << std::endl;
+		**/
 	}
 
     private:

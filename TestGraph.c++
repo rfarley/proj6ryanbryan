@@ -103,8 +103,8 @@ struct TestGraph : CppUnit::TestFixture {
         edBE = add_edge(vdB, vdE, g).first;
         edCD = add_edge(vdC, vdD, g).first;
         edDE = add_edge(vdD, vdE, g).first;
-        edDF = add_edge(vdD, vdF, g).first;
-        //edFD = add_edge(vdF, vdD, g).first;
+        //edDF = add_edge(vdD, vdF, g).first;
+        edFD = add_edge(vdF, vdD, g).first;
         edFH = add_edge(vdF, vdH, g).first;
         edGH = add_edge(vdG, vdH, g).first;}
 
@@ -113,7 +113,6 @@ struct TestGraph : CppUnit::TestFixture {
     // -------------
 
     void test_add_edge () {
-	std::cout << "test add_edge() " << std::endl;
         std::pair<edge_descriptor, bool> p = add_edge(vdA, vdB, g);
         CPPUNIT_ASSERT(p.first == edAB);
         CPPUNIT_ASSERT(p.second == false);}
@@ -123,7 +122,6 @@ struct TestGraph : CppUnit::TestFixture {
     // ----------------------
 
     void test_adjacent_vertices () {
-	std::cout << "test adjacent_vertices() " << std::endl;
         std::pair<adjacency_iterator, adjacency_iterator> p = adjacent_vertices(vdA, g);
         adjacency_iterator b = p.first;
         adjacency_iterator e = p.second;
@@ -141,11 +139,7 @@ struct TestGraph : CppUnit::TestFixture {
     // ---------
 
     void test_edge () {
-	std::cout << "test _edge() " << std::endl;
-        const std::pair<edge_descriptor, bool>& p = edge(vdA, vdB, g);
-	const std::pair<edge_descriptor, bool>& q = edge(vdA, vdB, g);
-        CPPUNIT_ASSERT(p.first == q.first);
-        CPPUNIT_ASSERT(&p.first != &q.first);
+        std::pair<edge_descriptor, bool> p = edge(vdA, vdB, g);
         CPPUNIT_ASSERT(p.first == edAB);
         CPPUNIT_ASSERT(p.second == true);}
 
@@ -154,7 +148,6 @@ struct TestGraph : CppUnit::TestFixture {
     // ----------
 
     void test_edges () {
-	std::cout << "test _edges() " << std::endl;
         std::pair<edge_iterator, edge_iterator> p = edges(g);
         edge_iterator b = p.first;
         edge_iterator e = p.second;
@@ -172,16 +165,14 @@ struct TestGraph : CppUnit::TestFixture {
     // --------------
 
     void test_num_edges () {
-	std::cout << "test num_edges() " << std::endl;
         edges_size_type es = num_edges(g);
-        CPPUNIT_ASSERT(es == 11);}
+        CPPUNIT_ASSERT(es == 10);}
 
     // -----------------
     // test_num_vertices
     // -----------------
 
     void test_num_vertices () {
-	std::cout << "test num_vertices() " << std::endl;
         vertices_size_type vs = num_vertices(g);
         CPPUNIT_ASSERT(vs == 8);}
 
@@ -190,16 +181,14 @@ struct TestGraph : CppUnit::TestFixture {
     // -----------
 
     void test_source () {
-	std::cout << "test source() " << std::endl;
         vertex_descriptor vd = source(edAB, g);
         CPPUNIT_ASSERT(vd == vdA);}
 
-    // -----------    CPPUNIT_TEST(test_has_cycle);
+    // -----------
     // test_target
     // -----------
 
     void test_target () {
-	std::cout << "test target() " << std::endl;
         vertex_descriptor vd = target(edAB, g);
         CPPUNIT_ASSERT(vd == vdB);}
 
@@ -208,11 +197,7 @@ struct TestGraph : CppUnit::TestFixture {
     // -----------
 
     void test_vertex () {
-	std::cout << "test vertex() " << std::endl;
-        const vertex_descriptor& vd = vertex(0, g);
-        const vertex_descriptor& vd2 = vertex(0, g);
-        assert(vd == vd2);
-        assert(&vd != &vd2);
+        vertex_descriptor vd = vertex(0, g);
         CPPUNIT_ASSERT(vd == vdA);}
 
     // -------------
@@ -220,7 +205,6 @@ struct TestGraph : CppUnit::TestFixture {
     // -------------
 
     void test_vertices () {
-	std::cout << "test vertices() " << std::endl;
         std::pair<vertex_iterator, vertex_iterator> p = vertices(g);
         vertex_iterator b = p.first;
         vertex_iterator e = p.second;
@@ -231,15 +215,13 @@ struct TestGraph : CppUnit::TestFixture {
         ++b;
         if (b != e) {
             vertex_descriptor vd = *b;
-            CPPUNIT_ASSERT(vd == vdB);}
-	}
+            CPPUNIT_ASSERT(vd == vdB);}}
 
     // --------------
     // test_has_cycle
     // --------------
 
     void test_has_cycle () {
-	std::cout << "test has_cycle() " << std::endl;
         CPPUNIT_ASSERT(has_cycle(g));}
 
     // ---------------------
@@ -247,12 +229,9 @@ struct TestGraph : CppUnit::TestFixture {
     // ---------------------
 
     void test_topological_sort () {
-	std::cout << "test topological_sort() " << std::endl;
         std::ostringstream out;
         topological_sort(g, std::ostream_iterator<vertex_descriptor>(out, " "));
-	std::cout << out.str() << std::endl;
-        CPPUNIT_ASSERT(out.str() == "2 0 1 ");
-	}
+        CPPUNIT_ASSERT(out.str() == "4 3 1 2 0 7 5 6 ");}
 
     // -----
     // suite
@@ -270,7 +249,6 @@ struct TestGraph : CppUnit::TestFixture {
     CPPUNIT_TEST(test_vertex);
     CPPUNIT_TEST(test_vertices);
     CPPUNIT_TEST(test_topological_sort);
-
     CPPUNIT_TEST_SUITE_END();};
 
 
@@ -287,10 +265,8 @@ int main () {
 
     CppUnit::TextTestRunner tr;
     tr.addTest(TestGraph< adjacency_list<setS, vecS, directedS> >::suite());
-    //tr.addTest(TestGraph<Graph>::suite());
+    tr.addTest(TestGraph<Graph>::suite());
     tr.run();
 
     cout << "Done." << endl;
     return 0;}
-
-
