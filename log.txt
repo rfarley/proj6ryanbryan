@@ -1,0 +1,65 @@
+commit 45434e5d2c44d93be393c62a92c3d6378009ec01
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Sun Aug 8 13:51:43 2010 -0500
+
+    documentation
+
+commit 5c4dad2800e81cc8ac765a86033cb21e813b8c3f
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Sat Aug 7 17:11:53 2010 -0500
+
+    almost done
+
+commit 1e0dc150fec77976da5b8071cf81f5048c9243ca
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Sat Aug 7 16:02:50 2010 -0500
+
+    top sort almost done
+
+commit 33c5236bfdc70c05eea7e55fa46289b807985bf4
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Sat Aug 7 13:26:03 2010 -0500
+
+    has cycle working
+
+commit 7f474c894a4c191c8e4c788ab5349f0f1fb9f3ce
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Thu Aug 5 20:56:15 2010 -0500
+
+    has_cycle done
+
+commit 111df30a54e44f9bc01f9107aba760c7c8c5be12
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Thu Aug 5 20:46:55 2010 -0500
+
+    working on cycle
+
+commit f8ac32973b6dce7f36ff8fdf6875ce848b06a483
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Thu Aug 5 17:25:40 2010 -0500
+
+    2 vector sets done
+
+commit f45bee72bb776dfbd5603e4482a4ca1c6a7730af
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Thu Aug 5 17:19:04 2010 -0500
+
+    adding second vector
+
+commit 85824544ef9f688442cb56b1c002c44b916308f8
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Thu Aug 5 16:27:05 2010 -0500
+
+    add vector and add edge
+
+commit 9d3eaa76ed51ca137c09a18224bf79b9da78ee1e
+Author: fallenmonk <bryansutton@mail.utexas.edu>
+Date:   Thu Aug 5 15:12:30 2010 -0500
+
+    skeleton files
+
+commit b723fc6ee216018e6121972fa478805d9b705cd2
+Author: unknown <labuser@.(none)>
+Date:   Thu Aug 5 14:44:15 2010 -0500
+
+    first commit
