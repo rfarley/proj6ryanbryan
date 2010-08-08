@@ -79,6 +79,35 @@ struct TestGraph : CppUnit::TestFixture {
     edge_descriptor edFH;
     edge_descriptor edGH;
 
+    graph_type h;
+
+    vertex_descriptor vdAh;
+    vertex_descriptor vdBh;
+    vertex_descriptor vdCh;
+    vertex_descriptor vdDh;
+    vertex_descriptor vdEh;
+    vertex_descriptor vdFh;
+    vertex_descriptor vdGh;
+    vertex_descriptor vdHh;
+
+    edge_descriptor edABh;
+    edge_descriptor edACh;
+    edge_descriptor edAEh;
+    edge_descriptor edBDh;
+    edge_descriptor edBEh;
+    edge_descriptor edCDh;
+    edge_descriptor edDEh;
+    edge_descriptor edDFh;
+    edge_descriptor edFHh;
+    edge_descriptor edGHh;
+
+    graph_type j;
+
+    vertex_descriptor vdAj;
+    vertex_descriptor vdBj;
+    edge_descriptor edABj;
+    edge_descriptor edBAj;
+
     // -----
     // setUp
     // -----
@@ -86,7 +115,7 @@ struct TestGraph : CppUnit::TestFixture {
     // directed, sparse, unweighted
     // possibly connected
     // possibly cyclic
-    // Collins, 2nd, pg. 653
+    // Collins, 2nd, pg. 653t(TestGraph<Gr
     void setUp () {
         vdA = add_vertex(g);
         vdB = add_vertex(g);
@@ -103,10 +132,36 @@ struct TestGraph : CppUnit::TestFixture {
         edBE = add_edge(vdB, vdE, g).first;
         edCD = add_edge(vdC, vdD, g).first;
         edDE = add_edge(vdD, vdE, g).first;
-        //edDF = add_edge(vdD, vdF, g).first;
+        edDF = add_edge(vdD, vdF, g).first;
         edFD = add_edge(vdF, vdD, g).first;
         edFH = add_edge(vdF, vdH, g).first;
-        edGH = add_edge(vdG, vdH, g).first;}
+        edGH = add_edge(vdG, vdH, g).first;
+
+        vdAh = add_vertex(h);
+        vdBh = add_vertex(h);
+        vdCh = add_vertex(h);
+        vdDh = add_vertex(h);
+        vdEh = add_vertex(h);
+        vdFh = add_vertex(h);
+        vdGh = add_vertex(h);
+        vdHh = add_vertex(h);
+        edABh = add_edge(vdAh, vdBh, h).first;
+        edACh = add_edge(vdAh, vdCh, h).first;
+        edAEh = add_edge(vdAh, vdEh, h).first;
+        edBDh = add_edge(vdBh, vdDh, h).first;
+        edBEh = add_edge(vdBh, vdEh, h).first;
+        edCDh = add_edge(vdCh, vdDh, h).first;
+        edDEh = add_edge(vdDh, vdEh, h).first;
+        edDFh = add_edge(vdDh, vdFh, h).first;
+        edFHh = add_edge(vdFh, vdHh, h).first;
+        edGHh = add_edge(vdGh, vdHh, h).first;
+
+	vdAj = add_vertex(j);
+	vdBj = add_vertex(j);
+	edABj = add_edge(vdAj, vdBj, j).first;
+	edBAj = add_edge(vdBj, vdAj, j).first;
+	
+}
 
     // -------------
     // test_add_edge
@@ -116,6 +171,10 @@ struct TestGraph : CppUnit::TestFixture {
         std::pair<edge_descriptor, bool> p = add_edge(vdA, vdB, g);
         CPPUNIT_ASSERT(p.first == edAB);
         CPPUNIT_ASSERT(p.second == false);}
+
+    void test_add_edge2 () {
+        std::pair<edge_descriptor, bool> p = add_edge(vdA, vdD, g);
+        CPPUNIT_ASSERT(p.second == true);}
 
     // ----------------------
     // test_adjacent_vertices
@@ -134,14 +193,27 @@ struct TestGraph : CppUnit::TestFixture {
             vertex_descriptor vd = *b;
             CPPUNIT_ASSERT(vd == vdC);}}
 
+    void test_adjacent_vertices2 () {
+        std::pair<adjacency_iterator, adjacency_iterator> p = adjacent_vertices(vdE, g);
+        adjacency_iterator b = p.first;
+        adjacency_iterator e = p.second;
+        CPPUNIT_ASSERT(b == e);}
+
     // ---------
     // test_edge
     // ---------
 
     void test_edge () {
-        std::pair<edge_descriptor, bool> p = edge(vdA, vdB, g);
+        const std::pair<edge_descriptor, bool>& p = edge(vdA, vdB, g);
+        const std::pair<edge_descriptor, bool>& q = edge(vdA, vdB, g);
+        CPPUNIT_ASSERT(p.first == q.first);
+        CPPUNIT_ASSERT(&p.first != &q.first);
         CPPUNIT_ASSERT(p.first == edAB);
         CPPUNIT_ASSERT(p.second == true);}
+
+    void test_edge2 () {
+        const std::pair<edge_descriptor, bool>& p = edge(vdA, vdG, g);
+        CPPUNIT_ASSERT(p.second == false);}
 
     // ----------
     // test_edges
@@ -160,13 +232,30 @@ struct TestGraph : CppUnit::TestFixture {
             edge_descriptor ed = *b;
             CPPUNIT_ASSERT(ed == edAC);}}
 
+    void test_edges2 () {
+        std::pair<edge_iterator, edge_iterator> p = edges(g);
+        edge_iterator b = p.first;
+        edge_iterator e = p.second;
+        CPPUNIT_ASSERT(b != e);
+	int counter = 0;
+        while(b != e){
+		counter++;
+		b++;
+	}
+	CPPUNIT_ASSERT(counter == num_edges(g));}
+
     // --------------
     // test_num_edges
     // --------------
 
     void test_num_edges () {
         edges_size_type es = num_edges(g);
-        CPPUNIT_ASSERT(es == 10);}
+        CPPUNIT_ASSERT(es == 11);}
+
+    void test_num_edges2 () {
+	add_edge(vdB, vdC, g);
+        edges_size_type es = num_edges(g);
+        CPPUNIT_ASSERT(es == 12);}
 
     // -----------------
     // test_num_vertices
@@ -176,6 +265,11 @@ struct TestGraph : CppUnit::TestFixture {
         vertices_size_type vs = num_vertices(g);
         CPPUNIT_ASSERT(vs == 8);}
 
+    void test_num_vertices2 () {
+	add_vertex(g);
+        vertices_size_type vs = num_vertices(g);
+        CPPUNIT_ASSERT(vs == 9);}
+
     // -----------
     // test_source
     // -----------
@@ -183,6 +277,10 @@ struct TestGraph : CppUnit::TestFixture {
     void test_source () {
         vertex_descriptor vd = source(edAB, g);
         CPPUNIT_ASSERT(vd == vdA);}
+
+    void test_source2 () {
+        vertex_descriptor vd = source(edBE, g);
+        CPPUNIT_ASSERT(vd == vdB);}
 
     // -----------
     // test_target
@@ -192,13 +290,28 @@ struct TestGraph : CppUnit::TestFixture {
         vertex_descriptor vd = target(edAB, g);
         CPPUNIT_ASSERT(vd == vdB);}
 
+    void test_target2 () {
+        vertex_descriptor vd = target(edBE, g);
+        CPPUNIT_ASSERT(vd == vdE);}
+
     // -----------
     // test_vertex
     // -----------
 
     void test_vertex () {
-        vertex_descriptor vd = vertex(0, g);
+        const vertex_descriptor& vd = vertex(0, g);
+        const vertex_descriptor& vd2 = vertex(0, g);
+        assert(vd == vd2);
+        assert(&vd != &vd2);
         CPPUNIT_ASSERT(vd == vdA);}
+
+    void test_vertex2 () {
+        const vertex_descriptor& vd = vertex(1, g);
+        CPPUNIT_ASSERT(vd == vdB);}
+
+    void test_vertex3 () {
+        const vertex_descriptor& vd = vertex(6, g);
+        CPPUNIT_ASSERT(vd == vdG);}
 
     // -------------
     // test_vertices
@@ -224,14 +337,17 @@ struct TestGraph : CppUnit::TestFixture {
     void test_has_cycle () {
         CPPUNIT_ASSERT(has_cycle(g));}
 
+    void test_has_cycle2 () {
+        CPPUNIT_ASSERT(has_cycle(j));}
+
     // ---------------------
     // test_topological_sort
     // ---------------------
 
     void test_topological_sort () {
         std::ostringstream out;
-        topological_sort(g, std::ostream_iterator<vertex_descriptor>(out, " "));
-        CPPUNIT_ASSERT(out.str() == "4 3 1 2 0 7 5 6 ");}
+        topological_sort(h, std::ostream_iterator<vertex_descriptor>(out, " "));
+        CPPUNIT_ASSERT(out.str() == "4 7 5 3 1 2 0 6 ");}
 
     // -----
     // suite
@@ -239,15 +355,27 @@ struct TestGraph : CppUnit::TestFixture {
 
     CPPUNIT_TEST_SUITE(TestGraph);
     CPPUNIT_TEST(test_add_edge);
+    CPPUNIT_TEST(test_add_edge2);
     CPPUNIT_TEST(test_adjacent_vertices);
+    CPPUNIT_TEST(test_adjacent_vertices2);
     CPPUNIT_TEST(test_edge);
+    CPPUNIT_TEST(test_edge2);
+    CPPUNIT_TEST(test_edges);
     CPPUNIT_TEST(test_edges);
     CPPUNIT_TEST(test_num_edges);
+    CPPUNIT_TEST(test_num_edges2);
     CPPUNIT_TEST(test_num_vertices);
+    CPPUNIT_TEST(test_num_vertices2);
     CPPUNIT_TEST(test_source);
+    CPPUNIT_TEST(test_source2);
     CPPUNIT_TEST(test_target);
+    CPPUNIT_TEST(test_target2);
     CPPUNIT_TEST(test_vertex);
+    CPPUNIT_TEST(test_vertex2);
+    CPPUNIT_TEST(test_vertex3);
     CPPUNIT_TEST(test_vertices);
+    CPPUNIT_TEST(test_has_cycle);
+    CPPUNIT_TEST(test_has_cycle2);
     CPPUNIT_TEST(test_topological_sort);
     CPPUNIT_TEST_SUITE_END();};
 
@@ -260,7 +388,7 @@ int main () {
     using namespace std;
     using namespace boost;
 
-    ios_base::sync_with_stdio(false); // turn off synchronization with C I/O
+    ios_base::sync_with_stdio(false); // turn off syclearnchronization with C I/O
     cout << "TestGraph.c++" << endl;
 
     CppUnit::TextTestRunner tr;
